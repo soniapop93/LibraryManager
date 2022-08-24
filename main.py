@@ -1,16 +1,22 @@
-from user.user import User
-from book.book import Book
+from db.add_user_in_db import DataBaseManager
 
-list_of_users = []
-list_of_books = []
 
-new_user = User(1,"John", "Smith", "01/07/1993", "john_smithgmail.com", "07464512427", "str Principala", 0, "")
+conn = DataBaseManager()
 
-list_of_users.append(new_user)
+sql_user = 'INSERT INTO USER (id, first_name,last_name, date_of_birth, mail_address, phone_number, address, ' \
+      'number_of_books_borrowed, list_of_books_borrowed) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)'
 
-print(list_of_users[0])
+new_user_id = conn.generate_id(conn.get_previous_user_id())
 
-new_book = Book("China Study", "T. Colin Campbel", 1, 5, 5, False)
+data_user = [new_user_id,"John", "Smith", "09/08/1993", "john_smoth@gmail.com", "0746436627", "str Princiapala", 0, ""]
 
-list_of_books.append(new_book)
-print(list_of_books[0])
+conn.add_data_in_db(sql_user, data_user)
+
+sql_book = 'INSERT INTO BOOK (id, name,author, total_number_of_books, number_of_books_available, age_restricted) ' \
+      'VALUES(?, ?, ?, ?, ?, ?)'
+
+new_book_id = conn.generate_id(conn.get_previous_book_id())
+
+data_book = [new_book_id,"China Study", "T Campbell", "5", "5", False]
+
+conn.add_data_in_db(sql_book, data_book)
