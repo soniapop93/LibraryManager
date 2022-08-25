@@ -8,9 +8,7 @@ class User:
                  date_of_birth: str,
                  mail_address: str,
                  phone_number: str,
-                 address: str,
-                 number_of_books_borrowed: int,
-                 list_of_books_borrowed: list):
+                 address: str):
         self.user_id = user_id
         self.first_name = first_name
         self.last_name = last_name
@@ -18,8 +16,6 @@ class User:
         self.mail_address = mail_address
         self.phone_number = phone_number
         self.address = address
-        self.number_of_books_borrowed = number_of_books_borrowed
-        self.list_of_books_borrowed = list_of_books_borrowed
 
     def __str__(self):
         return self.str_output(self.user_id,
@@ -28,9 +24,9 @@ class User:
                                self.date_of_birth,
                                self.mail_address,
                                self.phone_number,
-                               self.address,
-                               self.number_of_books_borrowed,
-                               self.list_of_books_borrowed)
+                               self.address)
+                               # self.number_of_books_borrowed,
+                               # self.list_of_books_borrowed
 
     def str_output(self,
                    user_id: int,
@@ -39,9 +35,7 @@ class User:
                    date_of_birth: str,
                    mail_address: str,
                    phone_number: str,
-                   address: str,
-                   number_of_books_borrowed: int,
-                   list_of_books_borrowed: list):
+                   address: str):
 
         mail_address = mail_address if self.verify_mail_address(mail_address) else "-"
         phone_number = phone_number if self.verify_phone_number(phone_number) else "-"
@@ -51,9 +45,7 @@ class User:
                         "Date of birth: " + date_of_birth + "\n" + \
                         "Mail address: " + mail_address + "\n" + \
                         "Phone number: " + phone_number + "\n" + \
-                        "Address: " + address + "\n" + \
-                        "Number of books borrowed: " + str(number_of_books_borrowed) + "\n" + \
-                        "List of books borrowed: " + ", ".join(list_of_books_borrowed)
+                        "Address: " + address + "\n"
         return string_output
 
     def verify_mail_address(self, mail_address: str):
