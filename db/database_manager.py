@@ -12,6 +12,7 @@ class DataBaseManager:
         else:
             self.con = sl.connect("libraryDB.db")
 
+    # Create USER table in the database
     def create_user_db(self):
         with self.con:
             self.con.execute("""
@@ -26,10 +27,11 @@ class DataBaseManager:
                         list_of_books_borrowed_and_returned TEXT,
                         list_of_books_currently_borrowed TEXT);
                         """)
-
+    # Generate new id in database
     def generate_id(self, previous_id):
         return previous_id + 1
 
+    # Get previous User id
     def get_previous_user_id(self):
         with self.con:
             try:
@@ -38,10 +40,12 @@ class DataBaseManager:
             except TypeError:
                 return 0
 
+    # Add data in Database
     def add_data_in_db(self, sql, data):
         with self.con:
             self.con.execute(sql, data)
 
+    # Add new user in the database
     def add_user_in_db(self,
                       first_name: str,
                       last_name: str,
@@ -58,7 +62,7 @@ class DataBaseManager:
                      phone_number, address, 0, "-", "-"]
         self.add_data_in_db(sql_user, data_user)
 
-
+    # Add new book in the database
     def add_book_in_db(self,
                        name: str,
                        author: str,
@@ -72,6 +76,7 @@ class DataBaseManager:
         data_book = [new_book_id, name, author, total_number_of_books, total_number_of_books, age_restricted]
         self.add_data_in_db(sql_book, data_book)
 
+    # Create BOOK table in the database
     def create_book_db(self):
         with self.con:
             self.con.execute("""
@@ -82,7 +87,7 @@ class DataBaseManager:
                         number_of_books_available INTEGER,
                         age_restricted BOOLEAN);
                         """)
-
+    # Get previous Book id
     def get_previous_book_id(self):
         with self.con:
             try:
@@ -97,6 +102,7 @@ class DataBaseManager:
     def update_available_books(self, book_id: int, user_id: int):
         pass
 
+    # Create BORROWED_BOOKS table in the database
     def create_borrowed_books_db(self):
         with self.con:
             self.con.execute("""
@@ -107,6 +113,7 @@ class DataBaseManager:
                                date_of_return TEXT);
                                """)
 
+    # Get previous Borrowed_book id
     def get_previous_borrowed_book_id(self):
         with self.con:
             try:
@@ -119,6 +126,7 @@ class DataBaseManager:
     def borrowing_book(self, book_id: int):
         pass
 
+    # List all books from database
     def list_all_books_from_db(self):
         list_of_book_objects = []
         with self.con:
@@ -134,6 +142,7 @@ class DataBaseManager:
                 list_of_book_objects.append(book_object)
             return list_of_book_objects
 
+    # List all books that have a specific word
     def list_search_book(self, book_name: str):
         list_of_book_objects = []
         with self.con:
