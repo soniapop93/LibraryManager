@@ -1,6 +1,7 @@
 import sqlite3 as sl
 import os
 from book.book import Book
+from user.user import User
 from book.borrowed_book import BorrowedBook
 from datetime import datetime
 
@@ -31,19 +32,6 @@ class DataBaseManager:
                         list_of_books_currently_borrowed TEXT);
                         """)
 
-    # Generate new id in database
-    def generate_id(self, previous_id):
-        return previous_id + 1
-
-    # Get previous User id
-    def get_previous_user_id(self):
-        with self.con:
-            try:
-                previous_user_id = self.con.execute("""SELECT id FROM USER ORDER BY id DESC LIMIT 1;""").fetchone()
-                return previous_user_id[0]
-            except TypeError:
-                return 0
-
     # Add data in Database
     def add_data_in_db(self, sql, data):
         with self.con:
@@ -58,11 +46,10 @@ class DataBaseManager:
                        phone_number: str,
                        address: str):
 
-        sql_user = 'INSERT INTO USER (id, first_name,last_name, date_of_birth, mail_address, phone_number, address, ' \
-                   'number_of_books_borrowed, list_of_books_borrowed_and_returned, list_of_books_currently_borrowed) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+        sql_user = 'INSERT INTO USER (first_name,last_name, date_of_birth, mail_address, phone_number, address, ' \
+                   'number_of_books_borrowed, list_of_books_borrowed_and_returned, list_of_books_currently_borrowed) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)'
 
-        new_user_id = self.generate_id(self.get_previous_user_id())
-        data_user = [new_user_id, first_name, last_name, date_of_birth, mail_address,
+        data_user = [first_name, last_name, date_of_birth, mail_address,
                      phone_number, address, 0, "-", "-"]
         self.add_data_in_db(sql_user, data_user)
 
@@ -73,11 +60,10 @@ class DataBaseManager:
                        total_number_of_books: int,
                        age_restricted: bool):
 
-        sql_book = 'INSERT INTO BOOK (id, name,author, total_number_of_books, number_of_books_available, age_restricted) ' \
-                   'VALUES(?, ?, ?, ?, ?, ?)'
+        sql_book = 'INSERT INTO BOOK (name, author, total_number_of_books, number_of_books_available, age_restricted) ' \
+                   'VALUES(?, ?, ?, ?, ?)'
 
-        new_book_id = self.generate_id(self.get_previous_book_id())
-        data_book = [new_book_id, name, author, total_number_of_books, total_number_of_books, age_restricted]
+        data_book = [name, author, total_number_of_books, total_number_of_books, age_restricted]
         self.add_data_in_db(sql_book, data_book)
 
     # Create BOOK table in the database
@@ -91,15 +77,6 @@ class DataBaseManager:
                         number_of_books_available INTEGER,
                         age_restricted BOOLEAN);
                         """)
-
-    # Get previous Book id
-    def get_previous_book_id(self):
-        with self.con:
-            try:
-                previous_book_id = self.con.execute("""SELECT id FROM BOOK ORDER BY id DESC LIMIT 1;""").fetchone()
-                return previous_book_id[0]
-            except TypeError:
-                return 0
 
     # Change the number of books available for an existing book -> if the library receives more books
     def add_book_to_existing_one(self, book_id: int):
@@ -122,7 +99,14 @@ class DataBaseManager:
         with self.con:
             available_books_nr = self.con.execute("""SELECT number_of_books_available FROM BOOK WHERE ID=?""",
                                                   str(book_id)).fetchone()
-            return available_books_nr[0]
+        return available_books_nr[0]
+
+    # Get the total number of books borrowed by user
+    def get_number_of_previous_books_borrowed_by_user(self, user_id: int):
+        with self.con:
+            books_borrowed_by_user_nr = self.con.execute("""SELECT number_of_books_borrowed FROM USER WHERE id=?""",
+                                                         str(user_id)).fetchone()
+        return books_borrowed_by_user_nr[0]
 
     # Insert borrowed book into borrowed_book table
     def insert_borrowed_book_into_borrowed_book_table(self, book_id: int, user_id: int):
@@ -185,3 +169,31 @@ class DataBaseManager:
                     list_of_book_objects.append(book_object)
 
             return list_of_book_objects
+
+    # Search for a user in the database
+    def search_for_user(self, user_name: str):
+        list_of_users = []
+
+        with self.con:
+            list_users = self.con.execute("""SELECT * FROM USER""").fetchall()
+            for item in list_users:
+                print(item[0], item[1])
+                if (user_name.lower() in item[1].lower()) or (user_name.lower() in item[2].lower()):
+                    user_obj = User(user_id=item[0],
+                                    first_name=item[1],
+                                    last_name=item[2],
+                                    date_of_birth=item[3],
+                                    mail_address=item[4],
+                                    phone_number=item[5],
+                                    address=item[6])
+                    list_of_users.append(user_obj)
+                    print(item[0])
+
+        return list_of_users
+
+    # Update borrow books number for a user in the database
+    def update_borrow_books_number_for_user(self, user_id: id) -> None:
+        new_books_borrowed_nr = int(self.get_number_of_previous_books_borrowed_by_user(user_id)) + 1
+        with self.con:
+            self.con.execute("""UPDATE USER SET number_of_books_borrowed = ? WHERE id = ?""",
+                             (str(new_books_borrowed_nr), str(user_id)))

@@ -30,7 +30,11 @@ def add_new_book():
     print("Book is added in the database")
 
 
-def output_book(id: int, name: str, author: str, total_number_of_books: int, number_of_books_available: int,
+def output_book(id: int,
+                name: str,
+                author: str,
+                total_number_of_books: int,
+                number_of_books_available: int,
                 age_restricted: bool):
     output_str = "ID: " + str(id) + "\n" + \
                  "Name: " + name + "\n" + \
@@ -41,13 +45,47 @@ def output_book(id: int, name: str, author: str, total_number_of_books: int, num
     return output_str
 
 
+def output_user(user_id: int,
+                first_name: str,
+                last_name: str,
+                date_of_birth: str,
+                mail_address: str,
+                phone_number: str,
+                address: str):
+    string_output = "User ID: " + str(user_id) + "\n" + \
+                    "Name: " + first_name + " " + last_name + "\n" + \
+                    "Date of birth: " + date_of_birth + "\n" + \
+                    "Mail address: " + mail_address + "\n" + \
+                    "Phone number: " + phone_number + "\n" + \
+                    "Address: " + address + "\n"
+    return string_output
+
+
 def selected_book_for_borrowing(user_id: int):
     borrow_book_input = int(input("Please add the book ID you want to borrow: "))
-    conn.borrowing_book(borrow_book_input)
-    conn.insert_borrowed_book_into_borrowed_book_table(borrow_book_input, user_id)
+    conn.borrowing_book(book_id=borrow_book_input)
+    conn.insert_borrowed_book_into_borrowed_book_table(book_id=borrow_book_input, user_id=user_id)
+    conn.update_borrow_books_number_for_user(user_id=user_id)
 
 
 def borrow_book():
+    search_user = input("Do you want to search for a user? (Y/N)")
+
+    if search_user.lower() == "y":
+        search_user_name_input = input("Please add the name you want to search for: ")
+
+        list_of_searched_users = conn.search_for_user(search_user_name_input)
+
+        for item in list_of_searched_users:
+            print("________________________________________")
+            print(output_user(item.user_id,
+                              item.first_name,
+                              item.last_name,
+                              item.date_of_birth,
+                              item.mail_address,
+                              item.phone_number,
+                              item.address))
+
     user_id = int(input("Add user id that wants to borrow the book: "))
     option_list_books = input("Selection option: \n1 - List all books\n2 - Search book\nOption number: ")
     db_list_of_books = []
@@ -71,17 +109,17 @@ def borrow_book():
 def decision_options(option_number: str):
     if option_number == "1":
         add_new_user_input = input("Do you want to add a new user? (Y/N): ")
-        if add_new_user_input == "Y":
+        if add_new_user_input.lower() == "y":
             add_new_user()
 
     elif option_number == "2":
         add_new_book_input = input("Do you want to add a new book? (Y/N): ")
-        if add_new_book_input == "Y":
+        if add_new_book_input.lower() == "y":
             add_new_book()
 
     elif option_number == "3":
         add_borrow_book_input = input("Do you want to borrow a book? (Y/N)")
-        if add_borrow_book_input == "Y":
+        if add_borrow_book_input.lower() == "y":
             borrow_book()
 
     elif option_number == "4":
