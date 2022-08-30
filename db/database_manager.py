@@ -123,8 +123,13 @@ class DataBaseManager:
                               borrowed_book_obj.date_of_return, borrowed_book_obj.user_id_that_borrowed_the_book]
         self.add_data_in_db(sql_borrowed_book, data_borrowed_book)
 
+        with self.con:
+            id_of_borrowed_book = (self.con.execute("""SELECT id FROM BORROWED_BOOKS ORDER BY id DESC LIMIT 1;""").fetchone())[0]
+
         print("Book with ID " + str(borrowed_book_obj.book_id) +
               " was inserted in the BORROWED_BOOKS table")
+        return int(id_of_borrowed_book)
+
 
     # Borrowing book by book id
     def borrowing_book(self, book_id: int):
@@ -192,8 +197,25 @@ class DataBaseManager:
         return list_of_users
 
     # Update borrow books number for a user in the database
-    def update_borrow_books_number_for_user(self, user_id: id) -> None:
+    def update_borrow_books_number_for_user(self, user_id: int) -> None:
         new_books_borrowed_nr = int(self.get_number_of_previous_books_borrowed_by_user(user_id)) + 1
         with self.con:
             self.con.execute("""UPDATE USER SET number_of_books_borrowed = ? WHERE id = ?""",
                              (str(new_books_borrowed_nr), str(user_id)))
+
+    # Update list_of_books_currently_borrowed for USER in database
+    def update_list_of_books_currently_borrowed_by_user(self, user_id: int, borrowed_book_id: int) -> None:
+        with self.con:
+            books_currently_borrowed_list = list(str(self.con.execute("""SELECT list_of_books_currently_borrowed FROM USER WHERE ID=?""",
+                                                  str(user_id)).fetchone()[0]).split(","))
+
+            print(books_currently_borrowed_list)
+            if "-" in books_currently_borrowed_list:
+                books_currently_borrowed_list.remove("-")
+            books_currently_borrowed_list.append(str(borrowed_book_id))
+
+            new_list_of_borrowed_books = ",".join(books_currently_borrowed_list)
+
+            self.con.execute("""UPDATE USER SET list_of_books_currently_borrowed = ? WHERE id = ?""", (new_list_of_borrowed_books, str(user_id)))
+
+

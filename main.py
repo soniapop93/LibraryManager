@@ -64,8 +64,9 @@ def output_user(user_id: int,
 def selected_book_for_borrowing(user_id: int):
     borrow_book_input = int(input("Please add the book ID you want to borrow: "))
     conn.borrowing_book(book_id=borrow_book_input)
-    conn.insert_borrowed_book_into_borrowed_book_table(book_id=borrow_book_input, user_id=user_id)
+    borrowed_book_id = conn.insert_borrowed_book_into_borrowed_book_table(book_id=borrow_book_input, user_id=user_id)
     conn.update_borrow_books_number_for_user(user_id=user_id)
+    conn.update_list_of_books_currently_borrowed_by_user(user_id=user_id,borrowed_book_id=borrowed_book_id)
 
 
 def borrow_book():
