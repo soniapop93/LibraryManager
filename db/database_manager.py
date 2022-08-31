@@ -78,10 +78,6 @@ class DataBaseManager:
                         age_restricted BOOLEAN);
                         """)
 
-    # Change the number of books available for an existing book -> if the library receives more books
-    def add_book_to_existing_one(self, book_id: int):
-        pass
-
     # Create BORROWED_BOOKS table in the database
     def create_borrowed_books_db(self):
         with self.con:
@@ -130,6 +126,27 @@ class DataBaseManager:
               " was inserted in the BORROWED_BOOKS table")
         return int(id_of_borrowed_book)
 
+    # Get the number of books that the library has for a specific book id
+    def number_of_books(self, book_id: int):
+        with self.con:
+            book_nr = self.con.execute("""SELECT total_number_of_books FROM BOOK WHERE ID=?""",
+                                       str(book_id)).fetchone()
+        return book_nr[0]
+
+
+    # Change the number of books available for an existing book -> if the library receives more books
+    def add_books_to_existing_ones(self, book_id: int, new_book_number: int) -> None:
+        previous_nr_of_total_books = self.number_of_books(book_id=book_id)
+        new_total_nr_of_books = int(previous_nr_of_total_books) + new_book_number
+
+        previous_nr_of_available_books = self.get_available_books_number(book_id=book_id)
+        new_nr_of_available_books  = int(previous_nr_of_available_books) + new_book_number
+        with self.con:
+            self.con.execute("""UPDATE BOOK SET total_number_of_books = ? WHERE id = ?""",
+                             (str(new_total_nr_of_books), str(book_id)))
+            self.con.execute("""UPDATE BOOK SET number_of_books_available = ? WHERE id = ?""",
+                             (str(new_nr_of_available_books), str(book_id)))
+        print(str(new_book_number) + " new book(s) are added in the database for book with id: " + str(book_id))
 
     # Borrowing book by book id
     def borrowing_book(self, book_id: int):
