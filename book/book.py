@@ -1,5 +1,3 @@
-
-
 class Book:
     def __init__(self,
                  name: str,
@@ -29,8 +27,7 @@ class Book:
                    id: int,
                    total_number_of_books: int,
                    number_of_books_available: int,
-                   age_restricted: bool):
-
+                   age_restricted: bool) -> str:
         string_output = "Book name: " + name + "\n" + \
                         "Author: " + author + "\n" + \
                         "Book ID: " + str(id) + "\n" + \

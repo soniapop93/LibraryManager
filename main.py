@@ -2,18 +2,18 @@ from db.database_manager import DataBaseManager
 
 # Create db connection object
 conn = DataBaseManager()
-running = True # to run in loop, will break only for Exit option
+running = True  # to run in loop, will break only for Exit option
 
 
 # Display home menu options
-def display_home_menu():
+def display_home_menu() -> str:
     home_menu = input(
         "Select the following options: \n1 - Add new user\n2 - Add new book\n3 - Borrow_book\n4 - Return book\n5 - Update existing books number\n6 - Exit\nOption number: ")
     return home_menu
 
 
 # Add new user
-def add_new_user():
+def add_new_user() -> None:
     first_name = input("First Name: ")
     last_name = input("Last Name: ")
     date_of_birth = input("Date of birth(dd/MM/yyyy)")
@@ -25,7 +25,7 @@ def add_new_user():
 
 
 # Add new book
-def add_new_book():
+def add_new_book() -> None:
     name = input("Name of the book: ")
     author = input("Author name: ")
     total_number_of_books = int(input("Books quantity: "))
@@ -40,7 +40,7 @@ def output_book(id: int,
                 author: str,
                 total_number_of_books: int,
                 number_of_books_available: int,
-                age_restricted: bool):
+                age_restricted: bool) -> str:
     output_str = "ID: " + str(id) + "\n" + \
                  "Name: " + name + "\n" + \
                  "Author: " + author + "\n" + \
@@ -57,7 +57,7 @@ def output_user(user_id: int,
                 date_of_birth: str,
                 mail_address: str,
                 phone_number: str,
-                address: str):
+                address: str) -> str:
     string_output = "User ID: " + str(user_id) + "\n" + \
                     "Name: " + first_name + " " + last_name + "\n" + \
                     "Date of birth: " + date_of_birth + "\n" + \
@@ -68,7 +68,7 @@ def output_user(user_id: int,
 
 
 # Select book for borrowing
-def selected_book_for_borrowing(user_id: int):
+def selected_book_for_borrowing(user_id: int) -> None:
     borrow_book_input = int(input("Please add the book ID you want to borrow: "))
     conn.borrowing_book(book_id=borrow_book_input)
     borrowed_book_id = conn.insert_borrowed_book_into_borrowed_book_table(book_id=borrow_book_input, user_id=user_id)
@@ -146,7 +146,7 @@ def add_new_book_to_existing_one() -> None:
 
 
 # Option meniu decisions
-def decision_options(option_number: str):
+def decision_options(option_number: str) -> bool:
     # Add new user
     if option_number == "1":
         add_new_user_input = input("Do you want to add a new user? (Y/N): ")

@@ -1,5 +1,6 @@
 import re
 
+
 class User:
     def __init__(self,
                  user_id: int,
@@ -25,8 +26,8 @@ class User:
                                self.mail_address,
                                self.phone_number,
                                self.address)
-                               # self.number_of_books_borrowed,
-                               # self.list_of_books_borrowed
+        # self.number_of_books_borrowed,
+        # self.list_of_books_borrowed
 
     def str_output(self,
                    user_id: int,
@@ -35,7 +36,7 @@ class User:
                    date_of_birth: str,
                    mail_address: str,
                    phone_number: str,
-                   address: str):
+                   address: str) -> str:
 
         mail_address = mail_address if self.verify_mail_address(mail_address) else "-"
         phone_number = phone_number if self.verify_phone_number(phone_number) else "-"
@@ -48,7 +49,7 @@ class User:
                         "Address: " + address + "\n"
         return string_output
 
-    def verify_mail_address(self, mail_address: str):
+    def verify_mail_address(self, mail_address: str) -> bool:
         regex_mail_pattern = r"(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\x01-\x08" \
                              r"\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*\")" \
                              r"@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|" \
@@ -61,8 +62,7 @@ class User:
         except AttributeError:
             return False
 
-
-    def verify_phone_number(self, phone_number: str):
+    def verify_phone_number(self, phone_number: str) -> bool:
         regex_phone_pattern = r"^\d{10}$"
 
         try:
