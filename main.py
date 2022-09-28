@@ -8,7 +8,15 @@ running = True  # to run in loop, will break only for Exit option
 # Display home menu options
 def display_home_menu() -> str:
     home_menu = input(
-        "Select the following options: \n1 - Add new user\n2 - Add new book\n3 - Borrow_book\n4 - Return book\n5 - Update existing books number\n6 - Exit\nOption number: ")
+        "Select the following options: \n"
+        "1 - Add new user\n"
+        "2 - Add new book\n"
+        "3 - Borrow_book\n"
+        "4 - Return book\n"
+        "5 - Update existing books number\n"
+        "6 - List all books\n"
+        "7 - Exit\n"
+        "Option number: ")
     return home_menu
 
 
@@ -177,8 +185,18 @@ def decision_options(option_number: str) -> bool:
         if add_new_nr_book_input.lower() == "y":
             add_new_book_to_existing_one()
 
-    # Exit
+    # List all books in the DB
     elif option_number == "6":
+        print("----------------------------------------------------------------------\n")
+        db_list_of_books = conn.list_all_books_from_db()
+
+        for book in db_list_of_books:
+            print(output_book(book.id, book.name, book.author, book.total_number_of_books,
+                              book.number_of_books_available, book.age_restricted))
+            print("----------------------------------------------------------------------\n")
+
+    # Exit
+    elif option_number == "7":
         print("EXIT")
         global running
         running = False
