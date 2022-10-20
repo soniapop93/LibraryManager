@@ -17,6 +17,31 @@ class User:
         self.mail_address = mail_address
         self.phone_number = phone_number
         self.address = address
+        self.number_of_books_borrowed = 0
+        self.list_of_books_borrowed_and_returned = "-"
+        self.list_of_books_currently_borrowed = "-"
+
+    def __init__(self,
+                 user_id: int,
+                 first_name: str,
+                 last_name: str,
+                 date_of_birth: str,
+                 mail_address: str,
+                 phone_number: str,
+                 address: str,
+                 number_of_books_borrowed: int,
+                 list_of_books_borrowed_and_returned: str,
+                 list_of_books_currently_borrowed: str):
+        self.user_id = user_id
+        self.first_name = first_name
+        self.last_name = last_name
+        self.date_of_birth = date_of_birth
+        self.mail_address = mail_address
+        self.phone_number = phone_number
+        self.address = address
+        self.number_of_books_borrowed = number_of_books_borrowed
+        self.list_of_books_borrowed_and_returned = list_of_books_borrowed_and_returned
+        self.list_of_books_currently_borrowed = list_of_books_currently_borrowed
 
     def __str__(self):
         return self.str_output(self.user_id,
@@ -25,9 +50,11 @@ class User:
                                self.date_of_birth,
                                self.mail_address,
                                self.phone_number,
-                               self.address)
-        # self.number_of_books_borrowed,
-        # self.list_of_books_borrowed
+                               self.address,
+                               self.number_of_books_borrowed,
+                               self.list_of_books_borrowed_and_returned,
+                               self.list_of_books_currently_borrowed)
+
 
     def str_output(self,
                    user_id: int,
@@ -36,7 +63,10 @@ class User:
                    date_of_birth: str,
                    mail_address: str,
                    phone_number: str,
-                   address: str) -> str:
+                   address: str,
+                   number_of_books_borrowed: int,
+                   list_of_books_borrowed_and_returned: str,
+                   list_of_books_currently_borrowed: str) -> str:
 
         mail_address = mail_address if self.verify_mail_address(mail_address) else "-"
         phone_number = phone_number if self.verify_phone_number(phone_number) else "-"
@@ -46,7 +76,10 @@ class User:
                         "Date of birth: " + date_of_birth + "\n" + \
                         "Mail address: " + mail_address + "\n" + \
                         "Phone number: " + phone_number + "\n" + \
-                        "Address: " + address + "\n"
+                        "Address: " + address + "\n" + \
+                        "Number of books borrowed: " + str(number_of_books_borrowed) + "\n" + \
+                        "List of books borrowed and returned: " + list_of_books_borrowed_and_returned + "\n" + \
+                        "List of books currently borrowed: " + list_of_books_currently_borrowed
         return string_output
 
     def verify_mail_address(self, mail_address: str) -> bool:

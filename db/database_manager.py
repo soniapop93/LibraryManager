@@ -237,6 +237,25 @@ class DataBaseManager:
             self.con.execute("""UPDATE USER SET list_of_books_currently_borrowed = ? WHERE id = ?""",
                              (new_list_of_borrowed_books, str(user_id)))
 
+    # Get user by id
+    def get_user_by_id(self, user_id: int) -> User:
+        with self.con:
+            user_details = self.con.execute("""SELECT * FROM USER WHERE id = ?""",
+                             str(user_id)).fetchone()
+
+            user_obj = User(user_id=user_details[0],
+                            first_name=user_details[1],
+                            last_name=user_details[2],
+                            date_of_birth=user_details[3],
+                            mail_address=user_details[4],
+                            phone_number=user_details[5],
+                            address=user_details[6],
+                            number_of_books_borrowed=int(user_details[7]),
+                            list_of_books_borrowed_and_returned=user_details[8],
+                            list_of_books_currently_borrowed=user_details[9])
+
+        return user_obj
+
     # Return book
     def return_book(self, book_id: int, user_id: int) -> None:
         available_books_nr_after_return = int(self.get_available_books_number(book_id=book_id)) + 1
@@ -247,12 +266,24 @@ class DataBaseManager:
             print("The book with ID: " + str(book_id) + " is returned. Available books: " +
                   str(available_books_nr_after_return))
 
+    def update_return_date_of_borrowed_book(self, borrowed_book_id: int) -> None:
+        with self.con:
+            self.con.execute("""UPDATE BORROWED_BOOKS SET date_of_return = ? WHERE id = ?""",
+                             (str(datetime.now()), str(borrowed_book_id)))
+
+
     #  ------------------------
     #  TO DO: not finished yet
     #  -------------------------
 
     # Identify the book id based on the borrowed id, to use it for return book
     def identify_book_id_for_return(self, borrowed_book_id: int) -> int:
+        # db borrowed books adaug data la date of return -> DONE
+        # db book adaug cartea inapoi la available
+        # db user scad number of books borrowed
+        # db user adaug id book borrowed din db borrows books la list of books borrowed and return
+        # db user scot id din list of books currently borrowed (in functie de ce id are cartea imprumutata in db borrowed books)
+
         pass
     #  ------------------------
     #  TO DO: not finished yet

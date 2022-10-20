@@ -124,7 +124,26 @@ def borrow_book() -> None:
 
 # Return book
 def return_book() -> None:
-    pass
+    add_user_id = input("Please add user id: ")
+    user_obj = conn.get_user_by_id(int(add_user_id))
+    print("User identified. Details: \n" + user_obj.str_output(
+        user_id=user_obj.user_id,
+        first_name=user_obj.first_name,
+        last_name=user_obj.last_name,
+        date_of_birth=user_obj.date_of_birth,
+        mail_address=user_obj.mail_address,
+        phone_number=user_obj.phone_number,
+        address=user_obj.address,
+        number_of_books_borrowed=int(user_obj.number_of_books_borrowed),
+        list_of_books_borrowed_and_returned=user_obj.list_of_books_borrowed_and_returned,
+        list_of_books_currently_borrowed=user_obj.list_of_books_currently_borrowed))
+
+    id_of_borrowed_book_to_be_returned = input("Please add the id of the borrowed book you want to return: ")
+
+    conn.update_return_date_of_borrowed_book(int(id_of_borrowed_book_to_be_returned))
+
+
+
 
 
 # Update an existing book number with new values
